@@ -1,6 +1,6 @@
 package CreationNvPatient;
-import org.apache.poi.ss.usermodel.DataFormatter;
 
+import org.apache.poi.ss.usermodel.DataFormatter;
 
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -13,81 +13,69 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
 import PageObjetModele.Authentification;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.Duration;
+
 public class Login {
 
 	public class TestLogin extends Base {
-		
-			DataFormatter formatter = new DataFormatter();
-			@DataProvider(name = "driveTestKO")
-		    public Object[][] getDataKO() throws IOException {
-		        return getSheetData("C:\\Users\\Amira\\Desktop\\Formation\\PureMed\\Exelsheet.xlsx", 0);
-		    }
 
-		    @DataProvider(name = "driveTestOK")
-		    public Object[][] getDataOK() throws IOException {
-		        return getSheetData("C:\\Users\\Amira\\Desktop\\Formation\\PureMed\\Exelsheet.xlsx", 1);
-		    }
+		DataFormatter formatter = new DataFormatter();
 
-			@DataProvider(name = "driveTest")
+		@DataProvider(name = "driveTestKO")
+		public Object[][] getDataKO() throws IOException {
+			return getSheetData("C:\\Users\\Amira\\Desktop\\Formation\\PureMed\\Exelsheet.xlsx", 0);
+		}
 
-			private Object[][] getSheetData(String filePath, int sheetIndex) throws IOException
+		@DataProvider(name = "driveTestOK")
+		public Object[][] getDataOK() throws IOException {
+			return getSheetData("C:\\Users\\Amira\\Desktop\\Formation\\PureMed\\Exelsheet.xlsx", 1);
+		}
 
-			{
+		@DataProvider(name = "driveTest")
 
-				// mchina jebna l fichier excel mte3na eli fih les donné de test w ya9rah
+		private Object[][] getSheetData(String filePath, int sheetIndex) throws IOException
 
-				FileInputStream fis = new FileInputStream(filePath);
+		{
 
-				try (XSSFWorkbook wb = new XSSFWorkbook(fis)) {
+			FileInputStream fis = new FileInputStream(filePath);
 
-					// ye5ouli num de page eli chn9ara menha , 0 num de page c a dire l page loula
+			try (XSSFWorkbook wb = new XSSFWorkbook(fis)) {
 
-					XSSFSheet sheet = wb.getSheetAt(sheetIndex);
+				XSSFSheet sheet = wb.getSheetAt(sheetIndex);
 
-					// e7seb nombre de ligne eli f page
+				int rowCount = sheet.getPhysicalNumberOfRows();
 
-					int rowCount = sheet.getPhysicalNumberOfRows();
+				XSSFRow row = sheet.getRow(0);
 
-					// 5dhina 1er ligne (getRow) w 7sebna 3dad les colonne ei f ligne heki
+				int colCount = row.getLastCellNum();
 
-					XSSFRow row = sheet.getRow(0);
+				Object data[][] = new Object[rowCount - 1][colCount];
 
-					int colCount = row.getLastCellNum();
+				for (int i = 0; i < rowCount - 1; i++)
 
-					// star hedhe eli yebda b Object howa tebe3 association de testng avec le
-					// fichier excel
+				{
 
-					Object data[][] = new Object[rowCount - 1][colCount];
+					row = sheet.getRow(i + 1);
 
-					for (int i = 0; i < rowCount - 1; i++)
+					for (int j = 0; j < colCount; j++)
 
 					{
 
-						row = sheet.getRow(i + 1);
+						XSSFCell cell = row.getCell(j);
 
-						for (int j = 0; j < colCount; j++)
-
-						{
-
-							XSSFCell cell = row.getCell(j);
-
-							data[i][j] = formatter.formatCellValue(cell);
-
-						}
+						data[i][j] = formatter.formatCellValue(cell);
 
 					}
 
-					return data;
-
 				}
+
+				return data;
+
 			}
-		
+		}
 
 		@Test(dataProvider = "driveTestKO")
 		public void Testloginko(String Email, String Password) throws InterruptedException {
@@ -101,7 +89,7 @@ public class Login {
 
 			WebElement Button = hp.getLoginButton();
 			Button.click();
-	        Thread.sleep(3000);
+			Thread.sleep(3000);
 
 			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 			WebElement redNotification = wait.until(
@@ -109,37 +97,35 @@ public class Login {
 
 			// Vérifier la couleur de la notification rouge
 			String backgroundColor = redNotification.getCssValue("background-color");
-			  String expectedColor = "#d9534f";
-			Assert.assertEquals(backgroundColor, expectedColor, "La couleur de la notification rouge n'est pas correcte.");
-			
+			String expectedColor = "#d9534f";
+			Assert.assertEquals(backgroundColor, expectedColor,
+					"La couleur de la notification rouge n'est pas correcte.");
+
 		}
 
-		
-		 @Test(dataProvider = "driveTestOK") 
-		 public void Testloginok(String Email, String Password) throws InterruptedException { 
-			 Authentification hp = new Authentification(driver); 
-		  
-			 WebElement getinputemail = hp.getEmail();
-				getinputemail.sendKeys(Email);
+		@Test(dataProvider = "driveTestOK")
+		public void Testloginok(String Email, String Password) throws InterruptedException {
+			Authentification hp = new Authentification(driver);
 
-				WebElement getinputpass = hp.getMotDePasse();
-				getinputpass.sendKeys(Password);
+			WebElement getinputemail = hp.getEmail();
+			getinputemail.sendKeys(Email);
 
-				WebElement Button = hp.getLoginButton();
-				Button.click();
-		        Thread.sleep(3000);
+			WebElement getinputpass = hp.getMotDePasse();
+			getinputpass.sendKeys(Password);
 
-		  
-		  WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-	      WebElement greennotification = wait.until(
-	    		  ExpectedConditions.visibilityOfElementLocated(By.xpath("//p[@class='notifier__notification-message']")));
-	      Assert.assertTrue(greennotification.isDisplayed(), "Notification element not visible");
+			WebElement Button = hp.getLoginButton();
+			Button.click();
+			Thread.sleep(3000);
 
-	      String backgroundColor = greennotification.getCssValue("background-color");
-	      String expectedColor = "#5cb85c"; // Green color
-	      Assert.assertEquals(backgroundColor, expectedColor, "Notification color for successful login is incorrect");
-	  }
-		
-		 
+			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+			WebElement greennotification = wait.until(ExpectedConditions
+					.visibilityOfElementLocated(By.xpath("//p[@class='notifier__notification-message']")));
+			Assert.assertTrue(greennotification.isDisplayed(), "Notification element not visible");
+
+			String backgroundColor = greennotification.getCssValue("background-color");
+			String expectedColor = "#5cb85c"; // Green color
+			Assert.assertEquals(backgroundColor, expectedColor, "Notification color for successful login is incorrect");
+		}
+
 	}
 }

@@ -18,48 +18,40 @@ import org.testng.annotations.BeforeMethod;
 
 public class Base {
 
-	    public static WebDriver driver;
-	  
-		@BeforeMethod
-	    public void setup1() throws IOException {
-	        System.setProperty("webdriver.chrome.driver",
-	                "C:\\Users\\Amira\\Desktop\\Testing\\Formation Professionnel Manuel + Auto\\Auto\\Pratique\\Formation AUTO Selenium - DATA\\2025\\Pilote\\chrome-win64\\chrome-win64\\chromedriver.exe");
+	public static WebDriver driver;
 
-	        driver = new ChromeDriver();
-	        driver.manage().window().maximize();
+	@BeforeMethod
+	public void setup1() throws IOException {
+		System.setProperty("webdriver.chrome.driver",
+				"C:\\Users\\Amira\\Desktop\\Testing\\Formation Professionnel Manuel + Auto\\Auto\\Pratique\\Formation AUTO Selenium - DATA\\2025\\Pilote\\chrome-win64\\chrome-win64\\chromedriver.exe");
 
-	        // Enable implicit wait
-	        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+		driver = new ChromeDriver();
+		driver.manage().window().maximize();
 
-	        Properties prop = new Properties();
-	        FileInputStream FIchier = new FileInputStream(
-	                "C:\\Users\\Amira\\eclipse-workspace\\PureMed\\url.properties");
+		// Enable implicit wait
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
 
-	        prop.load(FIchier);
-	        driver.get(prop.getProperty("url"));
-	    }
+		Properties prop = new Properties();
+		FileInputStream FIchier = new FileInputStream("C:\\Users\\Amira\\eclipse-workspace\\PureMed\\url.properties");
 
-	    @AfterMethod
-	    public void setup2() {
-	        driver.quit();
-	    }
-	    
-	public void Imprime_Ecran () throws IOException {
-			
-			// Prendre une capture d'écran
-	        TakesScreenshot screenshot = (TakesScreenshot) driver; 
-	        File srcFile = screenshot.getScreenshotAs(OutputType.FILE); 
-	        
-	        
-	        long a = System.currentTimeMillis();// par ce que a chaque imp il va supp la precidente 
-	                                           // on a declarer une variable "a" et le met au mileu de nom de limp
-	                                           // don le nom ce change toujour donc rien va supp
-	        // Définir l'emplacement de sauvegarde de la capture d'écran
-	        File destFile = new File("C:\\Users\\Amira\\Desktop\\Formation\\PureMed\\Imprime\\screen" + a + "shot.png");
-	        
-	        // Copier le fichier de capture d'écran à l'emplacement spécifié
-	        FileUtils.copyFile(srcFile, destFile);
-		}
-
+		prop.load(FIchier);
+		driver.get(prop.getProperty("url"));
 	}
-		 
+
+	@AfterMethod
+	public void setup2() {
+		driver.quit();
+	}
+
+	public void Imprime_Ecran() throws IOException {
+
+		TakesScreenshot screenshot = (TakesScreenshot) driver;
+		File srcFile = screenshot.getScreenshotAs(OutputType.FILE);
+
+		long a = System.currentTimeMillis();
+		File destFile = new File("C:\\Users\\Amira\\Desktop\\Formation\\PureMed\\Imprime\\screen" + a + "shot.png");
+
+		FileUtils.copyFile(srcFile, destFile);
+	}
+
+}
